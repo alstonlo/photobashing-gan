@@ -57,7 +57,7 @@ def main():
         enable_progress_bar=False,
         gpus=(1 if torch.cuda.is_available() else 0),
         logger=logger,
-        log_every_n_steps=50,
+        log_every_n_steps=25,
         min_epochs=args.epochs,
         max_epochs=args.epochs,
         check_val_every_n_epoch=1,

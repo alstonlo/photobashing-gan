@@ -1,0 +1,2 @@
+python -m src.experimental.train_cmap_gan --num_workers=8 --lamb_ds=0
+python -m src.experimental.train_cmap_gan --num_workers=8 --lamb_ds=30
