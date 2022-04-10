@@ -49,7 +49,7 @@ class PhotobashGAN(pl.LightningModule):
                 image_stack = list(zip(real_images, cmaps, fake_images))
                 image_stack = image_stack[:10]
                 image_stack = torch.stack(list(sum(image_stack, ())), dim=0)
-                self.train_samples = make_grid(image_stack, 3, normalize=True, value_range=(-1, 1))
+                self.train_samples = make_grid(image_stack, 6, normalize=True, value_range=(-1, 1))
 
         # train discriminator
         else:
@@ -65,7 +65,7 @@ class PhotobashGAN(pl.LightningModule):
 
     def validation_epoch_end(self, outputs):
         image_gallery = torch.concat(outputs, dim=0)
-        grid = make_grid(image_gallery, 3, normalize=True, value_range=(-1, 1))
+        grid = make_grid(image_gallery, 6, normalize=True, value_range=(-1, 1))
         self.logger.log_image(key="val_samples", images=[grid], step=self.current_epoch)
 
         grid = self.train_samples
