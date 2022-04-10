@@ -30,12 +30,7 @@ The following summarizes the core files and folders of this repository:
       in `cmap/quantize.py`.
     - `experimental/`: the folder containing the training scripts used to train
       the BashGAN and compute or visualize experimental results.
-        - `train_cmap_gan.py`: script used to train BashGAN without
-          regularization.
-        - `train_cmap_dsgan.py`: script used to train BashGAN with DSGAN
-          regularization. This is a separate script for backward
-          compatibility (we had already trained BashGAN with no regularization
-          beforehand).
+        - `train_cmap_gan.py`: script used to train BashGAN.
     - `gan/`: the folder containing the implementation of BashGAN. The actual
       high-level model can be found in `gan/gan.py`, while the other files
       implement the submodules (e.g. layers, generator, discriminator).

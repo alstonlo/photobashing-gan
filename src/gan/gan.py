@@ -13,12 +13,12 @@ VGG_MODEL = VGG19()  # so that it is not saved to checkpoint
 VGG_MODEL.to("cuda" if torch.cuda.is_available() else "cpu")  # kind of a hack
 
 
-class PhotobashingGAN(pl.LightningModule):
+class PhotobashGAN(pl.LightningModule):
 
     def __init__(
             self,
             base_channels=32, latent_dim=256,
-            epochs=200, lr=0.0002, betas=(0.0, 0.999), lamb=10,
+            epochs=200, lr=0.0002, betas=(0.0, 0.999), lamb=10, lamb_ds=0.0
     ):
         super().__init__()
         self.save_hyperparameters()
@@ -97,7 +97,7 @@ class PhotobashingGAN(pl.LightningModule):
         return (fake_images, noise) if return_noise else fake_images
 
     def _gen_train_step(self, real_images, cmaps):
-        fake_images = self._sample_images(cmaps)
+        fake_images, noise = self._sample_images(cmaps, return_noise=True)
 
         multi_real_feats = self.dis(real_images, cmaps)
         multi_fake_feats = self.dis(fake_images, cmaps)
@@ -119,14 +119,24 @@ class PhotobashingGAN(pl.LightningModule):
         for f_real, f_fake, w in zip(vgg_real_feats, vgg_fake_feats, weights):
             vgg_loss += w * F.l1_loss(f_fake, f_real.detach())
 
+        if self.hparams.lamb_ds > 0:
+            with torch.no_grad():
+                fake_images_ds, noise_ds = self._sample_images(cmaps, return_noise=True)
+            fake_image_diff = torch.abs(fake_images - fake_images_ds.detach()).mean(dim=(1, 2, 3))
+            noise_diff = torch.abs(noise.detach() - noise_ds.detach()).mean(dim=1)
+            ds_loss = -torch.mean(fake_image_diff / (noise_diff + 1e-5))
+        else:
+            ds_loss = 0.0
+
         gen_loss = gen_loss / self.dis.n_subunits
         feat_loss = feat_loss / self.dis.n_subunits
-        loss = gen_loss + self.hparams.lamb * (feat_loss + vgg_loss)
+        loss = gen_loss + self.hparams.lamb * (feat_loss + vgg_loss) + self.hparams.lamb_ds * ds_loss
 
         batch_size = real_images.shape[0]
         self.log("gen_loss", gen_loss, batch_size=batch_size)
         self.log("feat_loss", feat_loss, batch_size=batch_size)
         self.log("vgg_loss", vgg_loss, batch_size=batch_size)
+        self.log("ds_loss", ds_loss, batch_size=batch_size)
 
         return fake_images, loss
 
@@ -158,56 +168,3 @@ class PhotobashingGAN(pl.LightningModule):
         self.log("dis_loss", loss, batch_size=batch_size)
 
         return loss
-
-
-# separate class for backward compatibility
-# setting lamb_ds=0 recovers regular PhotobashingGAN
-class PhotobashingDSGAN(PhotobashingGAN):
-
-    def __init__(
-            self,
-            base_channels=32, latent_dim=256,
-            epochs=200, lr=0.0002, betas=(0.0, 0.999), lamb=10, lamb_ds=8
-    ):
-        super().__init__(**{k: v for k, v in locals().items() if k not in ["__class__", "self", "lamb_ds"]})
-
-    def _gen_train_step(self, real_images, cmaps):
-        fake_images, noise = self._sample_images(cmaps, return_noise=True)
-
-        multi_real_feats = self.dis(real_images, cmaps)
-        multi_fake_feats = self.dis(fake_images, cmaps)
-
-        gen_loss = torch.tensor(0.0, device=cmaps.device)
-        feat_loss = torch.tensor(0.0, device=cmaps.device)
-        vgg_loss = torch.tensor(0.0, device=cmaps.device)
-
-        for real_feats, fake_feats in zip(multi_real_feats, multi_fake_feats):
-            fake_logits = fake_feats[-1]
-            gen_loss += -torch.mean(fake_logits)
-
-            for f_real, f_fake in zip(real_feats[:-1], fake_feats[:-1]):
-                feat_loss += F.l1_loss(f_fake, f_real.detach())
-
-        vgg_real_feats = VGG_MODEL(real_images)
-        vgg_fake_feats = VGG_MODEL(fake_images)
-        weights = [1.0 / 32, 1.0 / 16, 1.0 / 8, 1.0 / 4, 1.0]
-        for f_real, f_fake, w in zip(vgg_real_feats, vgg_fake_feats, weights):
-            vgg_loss += w * F.l1_loss(f_fake, f_real.detach())
-
-        with torch.no_grad():
-            fake_images_ds, noise_ds = self._sample_images(cmaps, return_noise=True)
-        fake_image_diff = torch.abs(fake_images - fake_images_ds.detach()).mean(dim=(1, 2, 3))
-        noise_diff = torch.abs(noise.detach() - noise_ds.detach()).mean(dim=1)
-        ds_loss = -torch.mean(fake_image_diff / (noise_diff + 1e-5))
-
-        gen_loss = gen_loss / self.dis.n_subunits
-        feat_loss = feat_loss / self.dis.n_subunits
-        loss = gen_loss + self.hparams.lamb * (feat_loss + vgg_loss) + self.hparams.lamb_ds * ds_loss
-
-        batch_size = real_images.shape[0]
-        self.log("gen_loss", gen_loss, batch_size=batch_size)
-        self.log("feat_loss", feat_loss, batch_size=batch_size)
-        self.log("vgg_loss", vgg_loss, batch_size=batch_size)
-        self.log("ds_loss", ds_loss, batch_size=batch_size)
-
-        return fake_images, loss
