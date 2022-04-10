@@ -15,4 +15,6 @@ dependencies:
   - seaborn
   - pytorch-lightning
   - wandb
+  - cvxopt
+  - scikit-learn-extra
 prefix: C:\Users\alsto\miniconda3\envs\photobashing-env
