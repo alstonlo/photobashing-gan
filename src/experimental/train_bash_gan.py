@@ -7,7 +7,7 @@ import torch
 from pytorch_lightning.callbacks import LearningRateMonitor, ModelCheckpoint
 from pytorch_lightning.loggers import WandbLogger
 
-from src.experimental.datamodule import CmapDatamodule
+from src.experimental.datamodule import ColorMapDatamodule
 from src.gan.gan import PhotobashGAN
 
 os.environ["WANDB_START_METHOD"] = "thread"
@@ -28,7 +28,7 @@ def main():
     args = parser.parse_args()
 
     # construct datamodule
-    datamodule = CmapDatamodule(
+    datamodule = ColorMapDatamodule(
         seed=args.seed,
         batch_size=args.batch_size,
         num_workers=args.num_workers,
