@@ -1,2 +1,2 @@
-python -m src.experimental.train_bash_gan --batch_size=32 --num_workers=4 --epochs=200 --lamb_ds=0
-python -m src.experimental.train_bash_gan --batch_size=32 --num_workers=4 --epochs=200 --lamb_ds=30
+python -m src.experimental.train_bash_gan --batch_size=24 --num_workers=4 --epochs=150 --lamb_ds=0
+python -m src.experimental.train_bash_gan --batch_size=24 --num_workers=4 --epochs=150 --lamb_ds=30
