@@ -18,7 +18,7 @@ def main():
     parser.add_argument("--seed", type=str, default=420)
     parser.add_argument("--batch_size", type=int, default=16)
     parser.add_argument("--num_workers", type=int, default=8)
-    parser.add_argument("--val_samples", type=int, default=10)
+    parser.add_argument("--val_samples", type=int, default=14)
     parser.add_argument("--subsample", type=int, default=-1)
 
     parser.add_argument("--epochs", type=int, default=100)
