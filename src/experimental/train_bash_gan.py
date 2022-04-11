@@ -25,6 +25,8 @@ def main():
     parser.add_argument("--lr", type=float, default=0.0002)
     parser.add_argument("--lamb", type=float, default=10.0)
     parser.add_argument("--lamb_ds", type=float, default=0.0)
+
+    parser.add_argument("--ckpt_freq", type=int, default=5)
     args = parser.parse_args()
 
     # construct datamodule
@@ -43,13 +45,13 @@ def main():
 
     # logging
     results_dir = pathlib.Path(__file__).parents[2] / "results"
-    logger = WandbLogger(project="photobash_gan", log_model=True, save_dir=str(results_dir))
+    logger = WandbLogger(project="photobash_gan", log_model="all", save_dir=str(results_dir))
     logger.experiment.config.update(vars(args))
 
     lr_monitor = LearningRateMonitor(logging_interval="epoch")
 
     # checkpointing
-    checkpointing = ModelCheckpoint(monitor="epoch", save_top_k=1, every_n_epochs=5, mode="max")
+    checkpointing = ModelCheckpoint(monitor="epoch", save_top_k=1, every_n_epochs=args.ckpt_freq, mode="max")
 
     # training
     trainer = pl.Trainer(
