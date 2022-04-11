@@ -43,7 +43,7 @@ def main():
 
     # logging
     results_dir = pathlib.Path(__file__).parents[2] / "results"
-    logger = WandbLogger(project="photobash_gan", log_model="all", save_dir=str(results_dir))
+    logger = WandbLogger(project="photobash_gan", log_model=True, save_dir=str(results_dir))
     logger.experiment.config.update(vars(args))
 
     lr_monitor = LearningRateMonitor(logging_interval="epoch")
