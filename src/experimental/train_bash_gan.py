@@ -49,7 +49,7 @@ def main():
     lr_monitor = LearningRateMonitor(logging_interval="epoch")
 
     # checkpointing
-    checkpointing = ModelCheckpoint(monitor="epoch", save_top_k=1, every_n_epochs=1, mode="max")
+    checkpointing = ModelCheckpoint(monitor="epoch", save_top_k=1, every_n_epochs=5, mode="max")
 
     # training
     trainer = pl.Trainer(
