@@ -34,6 +34,8 @@ The following summarizes the core files and folders of this repository:
     - `experimental/`: the folder containing the training scripts used to train
       the BashGAN and compute or visualize experimental results.
         - `train_bash_gan.py`: script used to train BashGAN.
+        - `eval_bash_gan.py`: script used to evaluate BashGAN (computing FID
+          and LPIPS scores).
     - `gan/`: the folder containing the implementation of BashGAN. The actual
       high-level model can be found in `gan/gan.py`, while the other files
       implement the submodules (e.g. layers, generator, discriminator).

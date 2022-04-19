@@ -1,2 +1,2 @@
-python -m src.experimental.eval_bash_gan --model=bash_gan
-python -m src.experimental.eval_bash_gan --model=bash_dsgan
+python -m src.experimental.eval_bash_gan --batch_size=25 --num_workers=8 --model=bash_gan
+python -m src.experimental.eval_bash_gan --batch_size=25 --num_workers=8 --model=bash_dsgan
