@@ -1,0 +1,2 @@
+python -m src.experimental.eval_bash_gan --model=bash_gan
+python -m src.experimental.eval_bash_gan --model=bash_dsgan

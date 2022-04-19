@@ -50,7 +50,7 @@ class EvalDataset(Dataset):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--debug", type=int, default=1)
+    parser.add_argument("--debug", type=int, default=0)
     parser.add_argument("--model", type=str, default="bash_gan")
     parser.add_argument("--num_workers", type=int, default=4)
     parser.add_argument("--n_samples", type=int, default=20)
