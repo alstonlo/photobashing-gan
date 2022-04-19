@@ -8,9 +8,11 @@ final project.
 ## Dependencies
 
 Please create and activate a conda environment with the dependencies listed in
-`environment.yml`. Download and unzip the `256.zip` file stored in this
+`environment.yml`. Please also install `torchmetrics[image]`. 
+
+Download and unzip the `256.zip` file stored in this
 [Google Drive](https://drive.google.com/drive/folders/1U4dqQp5qig_o1J20ckxHBzEvwiYnBE9p?usp=sharing)
-into the `data/` folder.
+into the `data/` folder. Download the model checkpoints into the `results/` folder.
 
 ## Repository Organization
 
@@ -37,7 +39,9 @@ The following summarizes the core files and folders of this repository:
 
 ## Reproducibility
 
-All scripts were run with their default settings.
+The specific commands used to train and evaluate the GANs are given in the 
+`scripts/` folder. 
+
 
 ## References
 

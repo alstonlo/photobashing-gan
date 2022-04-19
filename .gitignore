@@ -155,6 +155,5 @@ cython_debug/
 data/**/*.zip
 data/**/*.png
 results/wandb/
-*.ckpt
 archive/
-
+*.ckpt
