@@ -1,5 +1,4 @@
 import argparse
-import itertools
 import os
 import pathlib
 
@@ -13,7 +12,6 @@ from torchmetrics.image.lpip import LearnedPerceptualImagePatchSimilarity
 from tqdm import tqdm
 
 from src.cmap.quantize import quantize_colors
-from src.gan.gan import PhotobashGAN
 
 os.environ["WANDB_START_METHOD"] = "thread"
 
@@ -53,16 +51,15 @@ def main():
     parser.add_argument("--debug", type=int, default=0)
     parser.add_argument("--model", type=str, default="bash_gan")
     parser.add_argument("--num_workers", type=int, default=4)
-    parser.add_argument("--n_samples", type=int, default=20)
     args = parser.parse_args()
 
-    ckpt_path = PROJ_DIR / "results" / f"{args.model}.pt"
-    gan = PhotobashGAN.load_from_checkpoint(str(ckpt_path), map_location=DEVICE)
+    model_path = PROJ_DIR / "results" / f"{args.model}.pt"
+    gan = torch.load(str(model_path), map_location=DEVICE)
     gan.eval()
 
     dataloader = DataLoader(
         dataset=EvalDataset(),
-        batch_size=1,
+        batch_size=100,
         shuffle=False,
         num_workers=args.num_workers
     )
@@ -73,18 +70,14 @@ def main():
 
     lpips_score = 0
 
-    pairs = []
-    for i, j in itertools.product(range(args.n_samples), repeat=2):
-        if i < j:
-            pairs.append((i, j))
-    pairs_a, pairs_b = tuple(zip(*pairs))
-
     for i, (real_image, cmap) in enumerate(tqdm(dataloader)):
-        cmap_batch = torch.concat([cmap] * args.n_samples, dim=0)
+        real_image = real_image.to(DEVICE)
+        cmap = cmap.to(DEVICE)
+        cmap_batch = torch.concat([cmap] * 2, dim=0)
         cmap_batch = (cmap_batch.float() - 127.5) / 128.0  # normalize to [-1, 1]
 
         fake_images = gan._sample_images(cmap_batch)
-        lpips(fake_images[pairs_a, ...], fake_images[pairs_b, ...])
+        lpips(fake_images[:100, ...], fake_images[100:, ...])
 
         fake_images = torch.round(128.0 * fake_images + 127.5).to(torch.uint8)
         fid.update(real_image, real=True)
