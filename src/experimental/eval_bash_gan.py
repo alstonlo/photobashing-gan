@@ -59,7 +59,7 @@ def main():
 
     dataloader = DataLoader(
         dataset=EvalDataset(),
-        batch_size=100,
+        batch_size=25,
         shuffle=False,
         num_workers=args.num_workers
     )
