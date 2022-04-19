@@ -12,7 +12,7 @@ Please create and activate a conda environment with the dependencies listed in
 
 Download and unzip the `256.zip` and `eval.zip` file stored in this
 [Google Drive](https://drive.google.com/drive/folders/1vnUFLwjhkTKsRKDEv2MehG9wkMZoxkyv?usp=sharing)
-into the `data/` folder, and download the model checkpoints into the `results/`
+into the `data/` folder, and download the generator weights into the `results/`
 folder.
 
 ## Repository Organization

@@ -53,9 +53,9 @@ def main():
     parser.add_argument("--num_workers", type=int, default=4)
     args = parser.parse_args()
 
-    model_path = PROJ_DIR / "results" / f"{args.model}.pt"
-    gan = torch.load(str(model_path), map_location=DEVICE)
-    gan.eval()
+    model_path = PROJ_DIR / "results" / f"{args.model}_gen.pt"
+    gen = torch.load(str(model_path), map_location=DEVICE)
+    gen.eval()
 
     dataloader = DataLoader(
         dataset=EvalDataset(),
@@ -76,8 +76,13 @@ def main():
         cmap_batch = torch.concat([cmap] * 2, dim=0)
         cmap_batch = (cmap_batch.float() - 127.5) / 128.0  # normalize to [-1, 1]
 
-        fake_images = gan._sample_images(cmap_batch)
-        lpips(fake_images[:100, ...], fake_images[100:, ...])
+        batch_size = cmap_batch.shape[0]
+        assert batch_size % 2 == 0
+
+        noise = torch.randn((batch_size, 256), device=cmap_batch.device)
+        fake_images = gen(noise, cmap_batch)
+        print(fake_images.min(), fake_images.max())
+        lpips(fake_images[:batch_size // 2, ...], fake_images[batch_size // 2:, ...])
 
         fake_images = torch.round(128.0 * fake_images + 127.5).to(torch.uint8)
         fid.update(real_image, real=True)
