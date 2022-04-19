@@ -34,7 +34,7 @@ class Generator(nn.Module):
 
     def forward(self, noise, cmaps):
         noise = self.lin1(noise).reshape(noise.shape[0], -1, 4, 4)
-        pyramid = self._build_laplacian_pyramid(cmaps)
+        pyramid = self._build_gaussian_pyramid(cmaps)
 
         image = noise
         for block, sub_cmap in zip(self.blocks, reversed(pyramid)):
@@ -45,7 +45,7 @@ class Generator(nn.Module):
         return self.cnn_out(image)
 
     # noinspection PyTypeChecker
-    def _build_laplacian_pyramid(self, image):
+    def _build_gaussian_pyramid(self, image):
         pyramid = [image]
         while image.shape[-1] > 4:
             image = TF.gaussian_blur(image, kernel_size=5, sigma=1.0)
