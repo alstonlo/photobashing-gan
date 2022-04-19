@@ -11,7 +11,7 @@ Please create and activate a conda environment with the dependencies listed in
 `environment.yml`. Please also install `torchmetrics[image]` via `pip`. 
 
 Download and unzip the `256.zip` file stored in this
-[Google Drive](https://drive.google.com/drive/folders/1U4dqQp5qig_o1J20ckxHBzEvwiYnBE9p?usp=sharing)
+[Google Drive](https://drive.google.com/drive/folders/1vnUFLwjhkTKsRKDEv2MehG9wkMZoxkyv?usp=sharing)
 into the `data/` folder, and the model checkpoints into the `results/` folder.
 
 ## Repository Organization
