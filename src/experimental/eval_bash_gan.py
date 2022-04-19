@@ -66,6 +66,9 @@ def main():
     )
     args.data_size = len(dataloader.dataset)
 
+    wandb.init(project="photobash_gan", dir=str(PROJ_DIR / "results"))
+    wandb.config.update(args)
+
     fid = FrechetInceptionDistance().to(DEVICE)
     lpips = LearnedPerceptualImagePatchSimilarity().to(DEVICE)
 
@@ -94,10 +97,10 @@ def main():
     fid_score = fid.compute()
     lpips_score = lpips_score / len(dataloader)
 
+    print(args)
     print(f"FID:   {fid_score}")
     print(f"LPIPS: {lpips_score}")
 
-    wandb.init(project="photobash_gan", dir=str(PROJ_DIR / "results"))
     wandb.log({"FID": fid_score, "LPIPS": lpips_score})
 
 
