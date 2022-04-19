@@ -82,8 +82,7 @@ def main():
 
         noise = torch.randn((batch_size, 256), device=cmap_batch.device)
         fake_images = gen(noise, cmap_batch)
-        print(fake_images.min(), fake_images.max())
-        lpips(fake_images[:batch_size // 2, ...], fake_images[batch_size // 2:, ...])
+        lpips_score += lpips(fake_images[:batch_size // 2, ...], fake_images[batch_size // 2:, ...])
 
         fake_images = torch.round(128.0 * fake_images + 127.5).to(torch.uint8)
         fid.update(real_image, real=True)
