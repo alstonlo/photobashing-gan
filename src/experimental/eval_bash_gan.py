@@ -50,6 +50,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--debug", type=int, default=0)
     parser.add_argument("--model", type=str, default="bash_gan")
+    parser.add_argument("--batch_size", type=int, default=50)
     parser.add_argument("--num_workers", type=int, default=4)
     args = parser.parse_args()
 
@@ -59,7 +60,7 @@ def main():
 
     dataloader = DataLoader(
         dataset=EvalDataset(),
-        batch_size=25,
+        batch_size=args.batch_size,
         shuffle=False,
         num_workers=args.num_workers
     )
