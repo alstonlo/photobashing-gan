@@ -157,3 +157,4 @@ data/**/*.png
 results/wandb/
 archive/
 *.ckpt
+*.pt

@@ -56,7 +56,7 @@ def main():
     parser.add_argument("--n_samples", type=int, default=20)
     args = parser.parse_args()
 
-    ckpt_path = PROJ_DIR / "results" / f"{args.model}.ckpt"
+    ckpt_path = PROJ_DIR / "results" / f"{args.model}.pt"
     gan = PhotobashGAN.load_from_checkpoint(str(ckpt_path), map_location=DEVICE)
     gan.eval()
 
